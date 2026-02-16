@@ -14,10 +14,12 @@ public class Reservation {
     private int numberOfGuests;
     private BigDecimal totalAmount;
     private String specialRequests;
+    private Guest guest;
+    private Room room;
     
     public Reservation() {}
     
-    // Basic getters and setters
+    
     public int getReservationId() { return reservationId; }
     public void setReservationId(int reservationId) { this.reservationId = reservationId; }
     
@@ -49,5 +51,27 @@ public class Reservation {
     public String getSpecialRequests() { return specialRequests; }
     public void setSpecialRequests(String specialRequests) { 
         this.specialRequests = specialRequests; 
+    }
+    
+    public Guest getGuest() {
+        return guest;
+    }
+
+    public void setGuest(Guest guest) {
+        this.guest = guest;
+        if (guest != null) {
+            this.guestId = guest.getGuestId();
+        }
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+        if (room != null) {
+            this.roomId = room.getRoomId();
+        }
     }
 }
