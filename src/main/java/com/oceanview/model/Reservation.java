@@ -2,6 +2,7 @@ package com.oceanview.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime
 
 public class Reservation {
     
@@ -16,8 +17,26 @@ public class Reservation {
     private String specialRequests;
     private Guest guest;
     private Room room;
+    private LocalDateTime actualCheckIn;
+    private LocalDateTime actualCheckOut;
+    private ReservationStatus status;
+    private int createdBy;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     
-    public Reservation() {}
+    
+    
+    public enum ReservationStatus {
+        PENDING, CONFIRMED, CHECKED_IN, CHECKED_OUT, CANCELLED
+    }
+    
+    
+    
+    public Reservation() {
+    	this.status = ReservationStatus.PENDING;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
     
     
     public int getReservationId() { return reservationId; }
@@ -74,4 +93,29 @@ public class Reservation {
             this.roomId = room.getRoomId();
         }
     }
+    
+    public LocalDateTime getActualCheckIn() { return actualCheckIn; }
+    public void setActualCheckIn(LocalDateTime actualCheckIn) { 
+        this.actualCheckIn = actualCheckIn; 
+    }
+
+    public LocalDateTime getActualCheckOut() { return actualCheckOut; }
+    public void setActualCheckOut(LocalDateTime actualCheckOut) { 
+        this.actualCheckOut = actualCheckOut; 
+    }
+
+    public ReservationStatus getStatus() { return status; }
+    public void setStatus(ReservationStatus status) {
+        this.status = status;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public int getCreatedBy() { return createdBy; }
+    public void setCreatedBy(int createdBy) { this.createdBy = createdBy; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }
