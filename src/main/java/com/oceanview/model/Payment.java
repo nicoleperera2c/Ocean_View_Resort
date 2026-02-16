@@ -11,6 +11,8 @@ public class Payment {
     private String notes;
     private PaymentMethod paymentMethod;
     private PaymentStatus status;
+    private LocalDateTime paymentDate;
+    private int processedBy;
     
     public enum PaymentMethod {
         CASH, CREDIT_CARD, DEBIT_CARD, BANK_TRANSFER, ONLINE
@@ -22,6 +24,7 @@ public class Payment {
     
     public Payment() {
     	this.status = PaymentStatus.PENDING;
+    	this.paymentDate = LocalDateTime.now();
     	
     }
     
@@ -80,5 +83,21 @@ public class Payment {
 
     public void setStatus(PaymentStatus status) {
         this.status = status;
+    }
+    
+    public LocalDateTime getPaymentDate() {
+        return paymentDate;
+    }
+
+    public void setPaymentDate(LocalDateTime paymentDate) {
+        this.paymentDate = paymentDate;
+    }
+
+    public int getProcessedBy() {
+        return processedBy;
+    }
+
+    public void setProcessedBy(int processedBy) {
+        this.processedBy = processedBy;
     }
 }
