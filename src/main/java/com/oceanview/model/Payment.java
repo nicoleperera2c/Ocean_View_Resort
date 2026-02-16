@@ -9,8 +9,21 @@ public class Payment {
     private BigDecimal amount;
     private String transactionId;
     private String notes;
+    private PaymentMethod paymentMethod;
+    private PaymentStatus status;
     
-    public Payment() {}
+    public enum PaymentMethod {
+        CASH, CREDIT_CARD, DEBIT_CARD, BANK_TRANSFER, ONLINE
+    }
+
+    public enum PaymentStatus {
+        PENDING, COMPLETED, FAILED, REFUNDED
+    }
+    
+    public Payment() {
+    	this.status = PaymentStatus.PENDING;
+    	
+    }
     
     // Getters and Setters
     public int getPaymentId() {
@@ -51,5 +64,21 @@ public class Payment {
     
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+    
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public PaymentStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(PaymentStatus status) {
+        this.status = status;
     }
 }
