@@ -2,7 +2,8 @@ package com.oceanview.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 public class Reservation {
     
@@ -118,4 +119,20 @@ public class Reservation {
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    
+    public long calculateNights() {
+        if (checkInDate == null || checkOutDate == null) {
+            return 0;
+        }
+        return ChronoUnit.DAYS.between(checkInDate, checkOutDate);
+    }
+
+    public BigDecimal calculateTotal() {
+        if (room == null || room.getRoomType() == null) {
+            return BigDecimal.ZERO;
+        }
+        long nights = calculateNights();
+        return room.getRoomType().getPricePerNight()
+                .multiply(BigDecimal.valueOf(nights));
+    }
 }
