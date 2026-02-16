@@ -6,10 +6,16 @@ public class Room {
     private String roomNumber;
     private int roomTypeId;
     private RoomType roomType;
+    private RoomStatus status;
     private String floor;
     private boolean active;
     
+    public enum RoomStatus {
+        AVAILABLE, OCCUPIED, RESERVED, MAINTENANCE, CLEANING
+    }
+    
     public Room() {
+        this.status = RoomStatus.AVAILABLE;
         this.active = true;
     }
     
@@ -56,6 +62,14 @@ public class Room {
         }
     }
     
+    public RoomStatus getStatus() {
+        return status;
+    }
+    
+    public void setStatus(RoomStatus status) {
+        this.status = status;
+    }
+    
     public String getFloor() {
         return floor;
     }
@@ -72,10 +86,16 @@ public class Room {
         this.active = active;
     }
     
+    public boolean isAvailable() {
+        return this.status == RoomStatus.AVAILABLE && this.active;
+    }
+    
     @Override
     public String toString() {
         return "Room{" +
                 "roomNumber='" + roomNumber + '\'' +
+                ", type=" + (roomType != null ? roomType.getTypeName() : "N/A") +
+                ", status=" + status +
                 ", floor='" + floor + '\'' +
                 '}';
     }
