@@ -43,6 +43,8 @@ public class Reservation {
     public int getReservationId() { return reservationId; }
     public void setReservationId(int reservationId) { this.reservationId = reservationId; }
     
+    
+    
     public String getReservationNumber() { return reservationNumber; }
     public void setReservationNumber(String reservationNumber) { 
         this.reservationNumber = reservationNumber; 
@@ -134,5 +136,19 @@ public class Reservation {
         long nights = calculateNights();
         return room.getRoomType().getPricePerNight()
                 .multiply(BigDecimal.valueOf(nights));
+    }
+    
+    public boolean canCheckIn() {
+        return status == ReservationStatus.CONFIRMED && 
+               LocalDate.now().equals(checkInDate);
+    }
+
+    public boolean canCheckOut() {
+        return status == ReservationStatus.CHECKED_IN;
+    }
+
+    public boolean canCancel() {
+        return status == ReservationStatus.PENDING || 
+               status == ReservationStatus.CONFIRMED;
     }
 }
