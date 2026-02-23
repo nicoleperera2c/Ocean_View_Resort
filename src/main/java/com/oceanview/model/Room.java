@@ -14,7 +14,7 @@ public class Room {
     private RoomStatus status;
 
     public enum RoomStatus {
-        AVAILABLE, OCCUPIED, MAINTENANCE, RESERVED
+        AVAILABLE, OCCUPIED, RESERVED, MAINTENANCE, CLEANING
     }
 
     public Room() {
