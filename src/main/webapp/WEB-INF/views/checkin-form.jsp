@@ -18,8 +18,10 @@
                 </div>
                 <% } %>
                     <div class="card">
-                        <% String resNum=request.getParameter("number"); if (resNum==null) resNum=(String)
-                            request.getAttribute("reservationNumber"); resNum=(resNum !=null) ? resNum : "" ; %>
+                        <% String resNum=request.getParameter("number"); if (resNum==null || resNum.isEmpty())
+                            resNum=request.getParameter("reservationNumber"); if (resNum==null || resNum.isEmpty())
+                            resNum=(String) request.getAttribute("reservationNumber"); resNum=(resNum !=null) ? resNum
+                            : "" ; %>
                             <form method="post" action="<%=request.getContextPath()%>/app/reservation/checkin">
                                 <div class="form-group">
                                     <label for="reservationNumber">Reservation Number</label>
