@@ -10,8 +10,13 @@ import com.oceanview.model.Room;
 import com.oceanview.service.interfaces.IReservationService;
 import com.oceanview.util.ValidationUtil;
 
+import com.oceanview.service.observer.ReservationObserver;
+import com.oceanview.service.observer.AuditLogObserver;
+import com.oceanview.service.observer.EmailNotificationObserver;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,11 +28,62 @@ public class ReservationServiceImpl implements IReservationService {
 
     private IReservationDAO reservationDAO;
     private IRoomDAO roomDAO;
+    private List<ReservationObserver> observers;
 
     public ReservationServiceImpl() {
         DAOFactory factory = DAOFactory.getInstance();
         this.reservationDAO = factory.getReservationDAO();
         this.roomDAO = factory.getRoomDAO();
+
+        // Initialize Observer Pattern
+        this.observers = new ArrayList<>();
+        this.observers.add(new AuditLogObserver());
+        this.observers.add(new EmailNotificationObserver());
+    }
+
+    private void notifyObservers(Reservation reservation, String action) {
+        for (ReservationObserver observer : observers) {
+            switch (action) {
+                case "CREATED":
+                    observer.onReservationCreated(reservation);
+                    break;
+                case "CHECKED_IN":
+                    observer.onCheckIn(reservation);
+                    break;
+                case "CHECKED_OUT":
+                    observer.onCheckOut(reservation);
+                    break;
+                case "CANCELLED":
+                    observer.onCancellation(reservation);
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Strategy Pattern: dynamically select the appropriate billing algorithm.
+     * - LongStayBillingStrategy for stays of 7+ nights (discount tiers)
+     * - SeasonalBillingStrategy for peak season bookings (Dec-Mar surcharge)
+     * - StandardBillingStrategy as the default
+     */
+    private com.oceanview.service.strategy.BillingStrategy selectBillingStrategy(LocalDate checkIn,
+            LocalDate checkOut) {
+        long nights = java.time.temporal.ChronoUnit.DAYS.between(checkIn, checkOut);
+
+        // Long stays get tiered discounts — this takes priority
+        if (nights >= 7) {
+            return new com.oceanview.service.strategy.LongStayBillingStrategy();
+        }
+
+        // Check if booking falls in peak season (Dec-Mar)
+        java.time.Month checkInMonth = checkIn.getMonth();
+        if (checkInMonth == java.time.Month.DECEMBER || checkInMonth == java.time.Month.JANUARY ||
+                checkInMonth == java.time.Month.FEBRUARY || checkInMonth == java.time.Month.MARCH) {
+            return new com.oceanview.service.strategy.SeasonalBillingStrategy();
+        }
+
+        // Default: standard billing
+        return new com.oceanview.service.strategy.StandardBillingStrategy();
     }
 
     @Override
@@ -82,8 +138,11 @@ public class ReservationServiceImpl implements IReservationService {
 
                 reservation.setRoom(room);
 
-                // Calculate total amount
-                BigDecimal totalAmount = reservation.calculateTotal();
+                // Strategy Pattern: dynamically select the billing algorithm
+                com.oceanview.service.strategy.BillingStrategy billingStrategy = selectBillingStrategy(
+                        reservation.getCheckInDate(), reservation.getCheckOutDate());
+                BigDecimal baseRate = room.getRoomType().getBasePrice();
+                BigDecimal totalAmount = reservation.calculateTotalAmount(baseRate, billingStrategy);
                 reservation.setTotalAmount(totalAmount);
 
                 // Generate reservation number
@@ -95,6 +154,9 @@ public class ReservationServiceImpl implements IReservationService {
                 // Create reservation transactionally
                 int reservationId = reservationDAO.createReservation(reservation);
                 reservation.setReservationId(reservationId);
+
+                // Trigger Observer Pattern Notification
+                notifyObservers(reservation, "CREATED");
             }
 
             return reservation;
@@ -181,6 +243,9 @@ public class ReservationServiceImpl implements IReservationService {
             if (updated) {
                 // Update room status to OCCUPIED
                 roomDAO.updateRoomStatus(reservation.getRoomId(), Room.RoomStatus.OCCUPIED);
+                // Observer Pattern: notify all observers of check-in event
+                reservation.setStatus(Reservation.ReservationStatus.CHECKED_IN);
+                notifyObservers(reservation, "CHECKED_IN");
             }
 
             return updated;
@@ -212,6 +277,9 @@ public class ReservationServiceImpl implements IReservationService {
             if (updated) {
                 // Update room status back to AVAILABLE
                 roomDAO.updateRoomStatus(reservation.getRoomId(), Room.RoomStatus.AVAILABLE);
+                // Observer Pattern: notify all observers of check-out event
+                reservation.setStatus(Reservation.ReservationStatus.CHECKED_OUT);
+                notifyObservers(reservation, "CHECKED_OUT");
             }
 
             return updated;
@@ -242,6 +310,8 @@ public class ReservationServiceImpl implements IReservationService {
             if (cancelled) {
                 // Free up the room
                 roomDAO.updateRoomStatus(reservation.getRoomId(), Room.RoomStatus.AVAILABLE);
+                // Observer Pattern: notify all observers of cancellation event
+                notifyObservers(reservation, "CANCELLED");
             }
 
             return cancelled;

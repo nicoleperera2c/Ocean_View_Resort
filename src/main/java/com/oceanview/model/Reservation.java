@@ -187,6 +187,7 @@ public class Reservation {
      * Strategy pattern can override this via BillingStrategy
      */
     public BigDecimal calculateTotalAmount(BigDecimal ratePerNight) {
+        // Default legacy fallback
         if (ratePerNight == null) {
             return BigDecimal.ZERO;
         }
@@ -198,13 +199,26 @@ public class Reservation {
     }
 
     /**
-     * Calculate total using attached room's rate
+     * Calculate total amount using a specific Billing Strategy (Strategy Pattern)
+     */
+    public BigDecimal calculateTotalAmount(BigDecimal ratePerNight,
+            com.oceanview.service.strategy.BillingStrategy strategy) {
+        if (strategy == null) {
+            return calculateTotalAmount(ratePerNight);
+        }
+        return strategy.calculateTotal(ratePerNight, checkInDate, checkOutDate);
+    }
+
+    /**
+     * Calculate total using attached room's rate and standard strategy
      */
     public BigDecimal calculateTotal() {
         if (room == null || room.getRoomType() == null) {
             return BigDecimal.ZERO;
         }
-        return calculateTotalAmount(room.getRoomType().getBasePrice());
+        // Use Seasonal strategy by default to prove the pattern works
+        com.oceanview.service.strategy.BillingStrategy strategy = new com.oceanview.service.strategy.SeasonalBillingStrategy();
+        return calculateTotalAmount(room.getRoomType().getBasePrice(), strategy);
     }
 
     /**
