@@ -365,18 +365,113 @@ public class RoomDAOImpl implements IRoomDAO {
         return roomType;
     }
 
+    // -------------------------------------------------------------------------
+    // CRUD Write Operations
+    // -------------------------------------------------------------------------
+
+    @Override
+    public int createRoom(Room room) throws DAOException {
+        String sql = "INSERT INTO rooms (room_number, room_type_id, floor, status) VALUES (?, ?, ?, ?)";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            conn = dbConnection.getConnection();
+            pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            pstmt.setString(1, room.getRoomNumber());
+            pstmt.setInt(2, room.getRoomTypeId());
+            pstmt.setInt(3, room.getFloorNumber());
+            pstmt.setString(4, room.getStatus().name());
+
+            int affected = pstmt.executeUpdate();
+            if (affected == 0) {
+                throw new DAOException("Creating room failed, no rows affected.");
+            }
+            rs = pstmt.getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+            throw new DAOException("Creating room failed, no ID obtained.");
+        } catch (SQLException e) {
+            throw new DAOException("Error creating room: " + e.getMessage(), e);
+        } finally {
+            closeResources(conn, pstmt, rs);
+        }
+    }
+
+    @Override
+    public boolean updateRoom(Room room) throws DAOException {
+        String sql = "UPDATE rooms SET room_number = ?, room_type_id = ?, floor = ?, status = ? WHERE room_id = ?";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            conn = dbConnection.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, room.getRoomNumber());
+            pstmt.setInt(2, room.getRoomTypeId());
+            pstmt.setInt(3, room.getFloorNumber());
+            pstmt.setString(4, room.getStatus().name());
+            pstmt.setInt(5, room.getRoomId());
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new DAOException("Error updating room: " + e.getMessage(), e);
+        } finally {
+            closeResources(conn, pstmt, null);
+        }
+    }
+
+    @Override
+    public boolean deleteRoom(int roomId) throws DAOException {
+        String sql = "DELETE FROM rooms WHERE room_id = ?";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            conn = dbConnection.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, roomId);
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new DAOException("Error deleting room: " + e.getMessage(), e);
+        } finally {
+            closeResources(conn, pstmt, null);
+        }
+    }
+
+    @Override
+    public boolean hasActiveReservations(int roomId) throws DAOException {
+        String sql = "SELECT COUNT(*) FROM reservations WHERE room_id = ? AND status IN ('CONFIRMED', 'CHECKED_IN')";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            conn = dbConnection.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, roomId);
+            rs = pstmt.executeQuery();
+            return rs.next() && rs.getInt(1) > 0;
+        } catch (SQLException e) {
+            throw new DAOException("Error checking active reservations: " + e.getMessage(), e);
+        } finally {
+            closeResources(conn, pstmt, rs);
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Private Helpers
+    // -------------------------------------------------------------------------
+
     private void closeResources(Connection conn, PreparedStatement pstmt, ResultSet rs) {
         if (rs != null) {
             try {
                 rs.close();
             } catch (SQLException e) {
-                /* logged */ }
+                /* ignored */ }
         }
         if (pstmt != null) {
             try {
                 pstmt.close();
             } catch (SQLException e) {
-                /* logged */ }
+                /* ignored */ }
         }
         if (conn != null) {
             dbConnection.closeConnection(conn);

@@ -7,24 +7,39 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface IRoomDAO {
-    
+
+    // --- Read operations ---
     Room findById(int roomId) throws DAOException;
-    
+
     Room findByRoomNumber(String roomNumber) throws DAOException;
-    
+
     List<Room> findAll() throws DAOException;
-    
+
     List<Room> findAvailableRooms() throws DAOException;
-    
+
     List<Room> findAvailableRoomsByDateRange(LocalDate checkIn, LocalDate checkOut) throws DAOException;
-    
+
     List<Room> findByRoomType(int roomTypeId) throws DAOException;
-    
-    boolean updateRoomStatus(int roomId, Room.RoomStatus status) throws DAOException;
-    
-    List<RoomType> findAllRoomTypes() throws DAOException;
-    
-    RoomType findRoomTypeById(int roomTypeId) throws DAOException;
-    
+
     int countRoomsByStatus(Room.RoomStatus status) throws DAOException;
+
+    // --- Room type queries ---
+    List<RoomType> findAllRoomTypes() throws DAOException;
+
+    RoomType findRoomTypeById(int roomTypeId) throws DAOException;
+
+    // --- Write operations (CRUD) ---
+    int createRoom(Room room) throws DAOException;
+
+    boolean updateRoom(Room room) throws DAOException;
+
+    boolean deleteRoom(int roomId) throws DAOException;
+
+    boolean updateRoomStatus(int roomId, Room.RoomStatus status) throws DAOException;
+
+    /**
+     * Check if room has active (CONFIRMED/CHECKED_IN) reservations — guards
+     * deletion.
+     */
+    boolean hasActiveReservations(int roomId) throws DAOException;
 }
