@@ -81,10 +81,10 @@
                                     </tr>
                                 </tfoot>
                             </table>
-                            <div class="bill-actions">
+                            <div class="bill-actions" data-html2canvas-ignore="true">
                                 <a href="<%=request.getContextPath()%>/app/payment?reservationNumber=<%= reservation.getReservationNumber() %>"
                                     class="btn btn-primary">Process Payment</a>
-                                <button onclick="window.print()" class="btn">Print Bill</button>
+                                <button onclick="downloadPDF()" class="btn">Download PDF Bill</button>
                                 <a href="<%=request.getContextPath()%>/app/reservation" class="btn">Back</a>
                             </div>
                         </div>
@@ -92,6 +92,25 @@
                             <p>Reservation not found.</p>
                             <% } %>
             </main>
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+            <script>
+                function downloadPDF() {
+                    const element = document.querySelector('.bill-container');
+                    const resNumber = '<%= reservation != null ? reservation.getReservationNumber() : "Unknown" %>';
+
+                    const opt = {
+                        margin: 10,
+                        filename: 'Invoice_' + resNumber + '.pdf',
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { scale: 2 },
+                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                    };
+
+                    // Generate and download the PDF
+                    html2pdf().set(opt).from(element).save();
+                }
+            </script>
         </body>
 
         </html>
