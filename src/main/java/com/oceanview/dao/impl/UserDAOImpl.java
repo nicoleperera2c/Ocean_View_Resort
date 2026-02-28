@@ -292,6 +292,57 @@ public class UserDAOImpl implements IUserDAO {
         return user;
     }
 
+    @Override
+    public List<User> findAllIncludingInactive() throws DAOException {
+        String sql = "SELECT * FROM users ORDER BY created_at DESC";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        List<User> users = new ArrayList<>();
+
+        try {
+            conn = dbConnection.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                users.add(mapResultSetToUser(rs));
+            }
+
+            return users;
+
+        } catch (SQLException e) {
+            throw new DAOException("Error finding all users: " + e.getMessage(), e);
+        } finally {
+            closeResources(conn, pstmt, rs);
+        }
+    }
+
+    @Override
+    public boolean updateStatus(int userId, boolean active) throws DAOException {
+        String sql = "UPDATE users SET active = ? WHERE user_id = ?";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            conn = dbConnection.getConnection();
+            pstmt = conn.prepareStatement(sql);
+
+            pstmt.setBoolean(1, active);
+            pstmt.setInt(2, userId);
+
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            throw new DAOException("Error updating user status: " + e.getMessage(), e);
+        } finally {
+            closeResources(conn, pstmt, null);
+        }
+    }
+
     private void closeResources(Connection conn, PreparedStatement pstmt, ResultSet rs) {
         if (rs != null) {
             try {
