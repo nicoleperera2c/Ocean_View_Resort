@@ -11,9 +11,9 @@ import java.util.regex.Pattern;
  */
 public class ValidationUtil {
 
-    /** Email regex pattern - RFC 5322 compliant simplified version */
+    /** Email regex pattern - strict version preventing double dots */
     private static final Pattern EMAIL_PATTERN = Pattern
-            .compile("^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$");
+            .compile("^(?!.*\\.\\.)[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$");
 
     /** Phone pattern - exactly 10 digits */
     private static final Pattern PHONE_PATTERN = Pattern.compile("^\\d{10}$");

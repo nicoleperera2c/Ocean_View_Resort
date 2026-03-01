@@ -365,9 +365,7 @@ public class RoomDAOImpl implements IRoomDAO {
         return roomType;
     }
 
-    // -------------------------------------------------------------------------
     // CRUD Write Operations
-    // -------------------------------------------------------------------------
 
     @Override
     public int createRoom(Room room) throws DAOException {
@@ -456,9 +454,7 @@ public class RoomDAOImpl implements IRoomDAO {
         }
     }
 
-    // -------------------------------------------------------------------------
     // Private Helpers
-    // -------------------------------------------------------------------------
 
     private void closeResources(Connection conn, PreparedStatement pstmt, ResultSet rs) {
         if (rs != null) {

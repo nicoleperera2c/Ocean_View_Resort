@@ -30,9 +30,7 @@ public class RoomServiceImpl implements IRoomService {
         this.roomDAO = DAOFactory.getInstance().getRoomDAO();
     }
 
-    // -------------------------------------------------------------------------
     // Read Operations
-    // -------------------------------------------------------------------------
 
     @Override
     public List<Room> getAllRooms() throws ServiceException {
@@ -77,9 +75,7 @@ public class RoomServiceImpl implements IRoomService {
         }
     }
 
-    // -------------------------------------------------------------------------
     // Create
-    // -------------------------------------------------------------------------
 
     @Override
     public Room addRoom(Room room) throws ServiceException {
@@ -114,9 +110,7 @@ public class RoomServiceImpl implements IRoomService {
         }
     }
 
-    // -------------------------------------------------------------------------
     // Update
-    // -------------------------------------------------------------------------
 
     @Override
     public boolean updateRoom(Room room) throws ServiceException {
@@ -157,9 +151,7 @@ public class RoomServiceImpl implements IRoomService {
         }
     }
 
-    // -------------------------------------------------------------------------
     // Delete
-    // -------------------------------------------------------------------------
 
     @Override
     public boolean deleteRoom(int roomId) throws ServiceException {
@@ -194,9 +186,7 @@ public class RoomServiceImpl implements IRoomService {
         }
     }
 
-    // -------------------------------------------------------------------------
     // Status Update
-    // -------------------------------------------------------------------------
 
     @Override
     public boolean updateRoomStatus(int roomId, Room.RoomStatus status) throws ServiceException {
@@ -213,9 +203,7 @@ public class RoomServiceImpl implements IRoomService {
         }
     }
 
-    // -------------------------------------------------------------------------
     // Shared Validation (DRY — used by both addRoom and updateRoom)
-    // -------------------------------------------------------------------------
 
     /**
      * Validates the room object's fields.

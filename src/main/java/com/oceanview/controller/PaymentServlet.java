@@ -43,9 +43,7 @@ public class PaymentServlet extends HttpServlet {
         reservationService = new ReservationServiceImpl();
     }
 
-    // -------------------------------------------------------------------------
     // GET — display the payment page
-    // -------------------------------------------------------------------------
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -78,9 +76,7 @@ public class PaymentServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/payment.jsp").forward(request, response);
     }
 
-    // -------------------------------------------------------------------------
     // POST — process payment or issue refund
-    // -------------------------------------------------------------------------
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -97,9 +93,7 @@ public class PaymentServlet extends HttpServlet {
         }
     }
 
-    // -------------------------------------------------------------------------
     // Payment Processing
-    // -------------------------------------------------------------------------
 
     private void handleProcessPayment(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -158,9 +152,7 @@ public class PaymentServlet extends HttpServlet {
         reloadPaymentPage(request, response, reservationNumber);
     }
 
-    // -------------------------------------------------------------------------
     // Refund Processing
-    // -------------------------------------------------------------------------
 
     private void handleRefund(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -189,9 +181,7 @@ public class PaymentServlet extends HttpServlet {
         reloadPaymentPage(request, response, reservationNumber);
     }
 
-    // -------------------------------------------------------------------------
     // Shared: reload the payment page with fresh data
-    // -------------------------------------------------------------------------
 
     private void reloadPaymentPage(HttpServletRequest request, HttpServletResponse response,
             String reservationNumber) throws ServletException, IOException {

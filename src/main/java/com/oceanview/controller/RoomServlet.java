@@ -36,9 +36,7 @@ public class RoomServlet extends HttpServlet {
         roomService = new RoomServiceImpl();
     }
 
-    // -------------------------------------------------------------------------
     // GET — list rooms, show add form, show edit form
-    // -------------------------------------------------------------------------
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -57,9 +55,7 @@ public class RoomServlet extends HttpServlet {
         }
     }
 
-    // -------------------------------------------------------------------------
     // POST — add, update, delete
-    // -------------------------------------------------------------------------
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -78,9 +74,7 @@ public class RoomServlet extends HttpServlet {
         }
     }
 
-    // -------------------------------------------------------------------------
     // List all rooms
-    // -------------------------------------------------------------------------
 
     private void listRooms(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -93,9 +87,7 @@ public class RoomServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/room-list.jsp").forward(request, response);
     }
 
-    // -------------------------------------------------------------------------
     // Show add form
-    // -------------------------------------------------------------------------
 
     private void showAddForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -108,9 +100,7 @@ public class RoomServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/room-form.jsp").forward(request, response);
     }
 
-    // -------------------------------------------------------------------------
     // Show edit form (pre-populated)
-    // -------------------------------------------------------------------------
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -135,9 +125,7 @@ public class RoomServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/room-form.jsp").forward(request, response);
     }
 
-    // -------------------------------------------------------------------------
     // Handle Add
-    // -------------------------------------------------------------------------
 
     private void handleAdd(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -154,9 +142,7 @@ public class RoomServlet extends HttpServlet {
         }
     }
 
-    // -------------------------------------------------------------------------
     // Handle Update
-    // -------------------------------------------------------------------------
 
     private void handleUpdate(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -182,9 +168,7 @@ public class RoomServlet extends HttpServlet {
         showEditForm(request, response);
     }
 
-    // -------------------------------------------------------------------------
     // Handle Delete
-    // -------------------------------------------------------------------------
 
     private void handleDelete(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -207,9 +191,7 @@ public class RoomServlet extends HttpServlet {
         }
     }
 
-    // -------------------------------------------------------------------------
     // Shared Helper: parse Room from HTTP request (DRY — used by add & update)
-    // -------------------------------------------------------------------------
 
     private Room parseRoomFromRequest(HttpServletRequest request) throws ServiceException {
         String roomNumber = request.getParameter("roomNumber");

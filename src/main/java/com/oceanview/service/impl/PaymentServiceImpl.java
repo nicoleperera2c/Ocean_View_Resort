@@ -46,9 +46,7 @@ public class PaymentServiceImpl implements IPaymentService {
         this.reservationDAO = factory.getReservationDAO();
     }
 
-    // -------------------------------------------------------------------------
     // Core Payment Processing
-    // -------------------------------------------------------------------------
 
     @Override
     public Payment processPayment(String reservationNumber, BigDecimal amount,
@@ -133,9 +131,7 @@ public class PaymentServiceImpl implements IPaymentService {
         }
     }
 
-    // -------------------------------------------------------------------------
     // Query Methods
-    // -------------------------------------------------------------------------
 
     @Override
     public List<Payment> getPaymentsForReservation(String reservationNumber) throws ServiceException {
@@ -169,9 +165,7 @@ public class PaymentServiceImpl implements IPaymentService {
         }
     }
 
-    // -------------------------------------------------------------------------
     // Refund
-    // -------------------------------------------------------------------------
 
     @Override
     public void refundPayment(int paymentId, int processedByUserId) throws ServiceException {
@@ -203,9 +197,7 @@ public class PaymentServiceImpl implements IPaymentService {
         }
     }
 
-    // -------------------------------------------------------------------------
     // Balance Utilities
-    // -------------------------------------------------------------------------
 
     @Override
     public BigDecimal getTotalPaidForReservation(int reservationId) throws ServiceException {
@@ -247,9 +239,7 @@ public class PaymentServiceImpl implements IPaymentService {
         }
     }
 
-    // -------------------------------------------------------------------------
     // Private Helpers
-    // -------------------------------------------------------------------------
 
     /**
      * Compute outstanding balance = totalAmount - totalPaid.
